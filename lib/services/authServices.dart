@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:learn_space/HomePage.dart';
 import 'package:learn_space/Login.dart';
 class authservice{
-
   //Handle Auth
   handleAuth(){
     return StreamBuilder(

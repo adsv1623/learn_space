@@ -12,16 +12,19 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
+    /*
+    Below Check if User already Logged In or Not ?  Goto HomePage :  Goto OnStart Page
+     */
      FirebaseAuth.instance
         .authStateChanges()
         .listen((User user) {
       if (user == null) {
-        print('User is currently signed out!');
+        print('User is currently signed out! So Moved To OnStart Page');
         Navigator.of(context).pushReplacementNamed('/OnStart');
       } else {
-        print('User is signed in!');
+        print('User is Already signed in! So Moved To HomePage');
         Navigator.of(context).pushReplacementNamed('/HomePage');
-        print('$user.uid');
+        print('Current User UID : $user.uid');
       }
     });
     super.initState();
@@ -46,19 +49,21 @@ class _SplashScreenState extends State<SplashScreen> {
               highlightColor: Color(0xffe100ff),
               child: Container(
                 padding: EdgeInsets.all(16.0),
-                child: Text(
-                  "Build My Money",
-                  style: TextStyle(
-                      fontSize: 50.0,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Pacifico',
-                      shadows: <Shadow>[
-                        Shadow(
-                            blurRadius: 18.0,
-                            color: Colors.black87,
-                            offset: Offset.fromDirection(120, 12)
-                        )
-                      ]
+                child: Center(
+                  child: Text(
+                    "LearnSpace",
+                    style: TextStyle(
+                        fontSize: 50.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Pacifico',
+                        shadows: <Shadow>[
+                          Shadow(
+                              blurRadius: 18.0,
+                              color: Colors.black87,
+                              offset: Offset.fromDirection(120, 12)
+                          )
+                        ]
+                    ),
                   ),
                 ),
               ),
@@ -68,6 +73,4 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-
-
 }
