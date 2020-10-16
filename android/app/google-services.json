@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "47220662360",
+    "firebase_url": "https://learnspace-d01dc.firebaseio.com",
+    "project_id": "learnspace-d01dc",
+    "storage_bucket": "learnspace-d01dc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47220662360:android:a1533b2c2561f356462a2d",
+        "android_client_info": {
+          "package_name": "com.amigos.learn_space"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "47220662360-udr79la63ebpbq5ekubrl60m9d8j5b0s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amigos.learn_space",
+            "certificate_hash": "3495ea1ef13c0b7bf23def6998a7516a92950353"
+          }
+        },
+        {
+          "client_id": "47220662360-pu6bb9b5amlmom7rq75ds6adgjibu7ik.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBf3jKapeenL0QpzgNsji_ZxXP52GTIdCU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "47220662360-pu6bb9b5amlmom7rq75ds6adgjibu7ik.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
