@@ -1,5 +1,4 @@
 import 'package:learn_space/SignUp.dart';
-import 'package:learn_space/chatRoomScreen.dart';
 import 'package:learn_space/search.dart';
 import 'package:learn_space/splash.dart';
 import 'package:flutter/material.dart';

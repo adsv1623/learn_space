@@ -11,6 +11,7 @@ import 'package:learn_space/services/authServices.dart';
 import 'package:learn_space/module/Constant.dart';
 import 'package:learn_space/services/database.dart';
 import 'package:learn_space/services/helperFunctions.dart';
+import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
 
 class MainCollapsingToolbar extends StatefulWidget {
   @override
@@ -42,6 +43,36 @@ class _MainCollapsingToolbarState extends State<MainCollapsingToolbar> {
     );
   }
 
+  Widget float1() {
+    return Container(
+      child: FloatingActionButton(
+        heroTag: "btn1",
+        onPressed: () {
+          authMethods.signOut().then((value) {
+            Navigator.of(context).pushReplacementNamed(
+                '/LoginPage');
+          }).catchError((e) {
+            print(e);
+          });
+        },
+        tooltip: 'Logout',
+        child: Icon(Icons.logout),
+      ),
+    );
+  }
+
+  Widget float2() {
+    return Container(
+      child: FloatingActionButton(
+        heroTag: "btn2",
+        onPressed: () {
+          Navigator.of(context).pushNamed('/SearchPage');
+        },
+        tooltip: 'Chat',
+        child: Icon(Icons.chat),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -71,11 +102,14 @@ class _MainCollapsingToolbarState extends State<MainCollapsingToolbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.search),
-        onPressed: (){
-          Navigator.of(context).pushNamed('/SearchPage');
-        },
+      floatingActionButton: AnimatedFloatingActionButton(
+        //Fab list
+          fabButtons: <Widget>[
+            float1(), float2()
+          ],
+          colorStartAnimation: Colors.blue,
+          colorEndAnimation: Colors.red,
+          animatedIconData: AnimatedIcons.menu_close //To principal button
       ),
       resizeToAvoidBottomPadding: true,
       body: DefaultTabController(
@@ -133,52 +167,22 @@ class _MainCollapsingToolbarState extends State<MainCollapsingToolbar> {
             },
             body: TabBarView(
               children: [
-                Container(
-                  child: Center(
-                    child:
-                    Center(
-                      child: InkWell(
-                        onTap: () {
-                          authMethods.signOut().then((value) {
-                            Navigator.of(context).pushReplacementNamed(
-                                '/LoginPage');
-                          }).catchError((e) {
-                            print(e);
-                          });
-                        },
-                        child: FadeAnimation(2, Container(
-                          height: 50,
-                          width: 150,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              gradient: LinearGradient(
-                                  colors: [
-                                    Color.fromRGBO(143, 148, 251, 1),
-                                    Color.fromRGBO(143, 148, 251, .6),
-                                  ]
-                              )
-                          ),
-                          child: Center(
-                            child: Text("Logout", style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),),
-                          ),
-                        ),
-                        ),
-                      ),
-                    ),
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("hii welcome"),
+                    Text("ohoo again welcome"),
+                  ],
                 ),
-                SafeArea(
-                    minimum: EdgeInsets.only(top: 80),
-                    child: chatRoomList()
+                Center(
+                  child: chatRoomList(),
                 ),
                 Center(
                   child: Text(" Tab 3 Content", style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 16),),
                 ),
                 Center(
-                  child: Text(" Tab 3 Content", style: TextStyle(
+                  child: Text(" Tab 4 Content", style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 16),),
                 ),
 

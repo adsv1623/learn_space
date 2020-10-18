@@ -54,10 +54,14 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        //toolbarOpacity: 0.5,
-        title:AutoSizeText(
+         backgroundColor: Colors.deepPurple,
+        title: AutoSizeText(
           "LearnSpace",
-          style: GoogleFonts.getFont('Chilanka',fontWeight: FontWeight.bold,fontSize: 20,),
+          style: GoogleFonts.getFont(
+            'Chilanka',
+            fontWeight: FontWeight.bold,
+            fontSize: 25,
+          ),
         ),
       ),
 
@@ -119,6 +123,7 @@ createChatRoomAndStartConversation(BuildContext context, String userName){
       "chatroomId": chatRoomId
     };
     DatabaseMethods().createChatRoom(chatRoomId, chatRoomMap);
+    Navigator.of(context).pop();
     Navigator.push(context, MaterialPageRoute(
       builder: (context) => chatRoomScreen(chatRoomId),
     ),);

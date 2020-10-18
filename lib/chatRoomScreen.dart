@@ -65,13 +65,13 @@ class _chatRoomScreenState extends State<chatRoomScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: AutoSizeText(
           "LearnSpace",
-          style: GoogleFonts.getFont(
-            'Chilanka',
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: GoogleFonts.getFont('Chilanka',
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              backgroundColor: Colors.deepPurple),
         ),
       ),
       body: Stack(
