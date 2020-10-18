@@ -1,4 +1,6 @@
 import 'package:learn_space/SignUp.dart';
+import 'package:learn_space/chatRoomScreen.dart';
+import 'package:learn_space/search.dart';
 import 'package:learn_space/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -25,6 +27,8 @@ class MyApp extends StatelessWidget {
         '/LoginPage': (BuildContext context) => new Login(),
         '/HomePage': (BuildContext context) => new MainCollapsingToolbar(),
         '/OnStart':  (BuildContext context) => new OnStart(),
+        '/SearchPage': (BuildContext context) => new SearchScreen(),
+        '/chatRoomScreen': (BuildContext context) => new chatRoomScreen(),
       },
     );
   }

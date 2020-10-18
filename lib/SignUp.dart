@@ -3,8 +3,12 @@ import 'package:learn_space/FadedAnimation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:learn_space/services/UserManagement.dart';
+import 'package:learn_space/services/authServices.dart';
+import 'package:learn_space/services/database.dart';
+import 'package:learn_space/services/helperFunctions.dart';
 
 import 'Loading.dart';
+import 'package:email_validator/email_validator.dart';
 
 
 class SignUp extends StatefulWidget {
@@ -13,162 +17,79 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  //added
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
-  //Phone auth
-  String phoneNo;
-  String smsCode;
-  String verificationId;
-
-  Future<void> verifyPhone() async{
-    print("////////////////Here VerifyPhone Starts////////\n");
-    print("Phone No :${this.phoneNo} ");
-    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId){
-      this.verificationId = verId;
-    };
-
-    final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]){
-      this.verificationId = verId;
-      smsCodeDialog(context).then((value){
-        print('Signed in With OTP');
-        Navigator.pop(context);
-      }).catchError((e){
-        Navigator.of(context).pop();
-        showDialog(
-            context:  context,
-            barrierDismissible: false,
-            builder: (BuildContext context){
-              return new AlertDialog(
-                title: Text('Failed - Try Again',style: TextStyle(fontFamily: 'pacifico',fontSize:10,fontWeight: FontWeight.bold ),),
-                content: Text('${e.message}'),
-                contentPadding: EdgeInsets.all(10.0),
-                actions: <Widget>[
-                  new FlatButton(
-                      onPressed: () {
-                        Navigator.of(context)
-                            .pushNamedAndRemoveUntil('/LoginPage', (Route<dynamic> route) => false);
-                      },
-                      child:
-                      Text('Try Again',style: TextStyle(color: Colors.redAccent[200],),))
-                ],
-              );
-            }
-        );
-      });
-    };
-
-    final PhoneVerificationCompleted verifiedSucces = (AuthCredential authRes){
-      print('verified');
-      FirebaseAuth.instance.signInWithCredential(authRes).catchError((e){
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil('/LoginPage', (Route<dynamic> route) => false);
-        print("///////////Error at PhoneVerification////////////");
-      });
-    };
-
-    final PhoneVerificationFailed verifiedFalied = (FirebaseAuthException  authRes){
-      print("//////////////////////////////// Failed Phone Verification Bro /////////////////////");
-      Navigator.of(context).pop();
-      showDialog(
-        context:  context,
-        barrierDismissible: false,
-        builder: (BuildContext context){
-          return new AlertDialog(
-            title: Text('Failed - Try Again',style: TextStyle(fontFamily: 'pacifico',fontSize:10,fontWeight: FontWeight.bold ),),
-            content: Text('${authRes.message==null? 'Try After Sometime\nLater': authRes.message}'),
-            contentPadding: EdgeInsets.all(10.0),
-            actions: <Widget>[
-              new FlatButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/LoginPage', (Route<dynamic> route) => false);
-                  },
-                  child:
-                  Text('Try Again',style: TextStyle(color: Colors.redAccent[200],),))
-            ],
-          );
-        }
-      );
-      print('${authRes.message}');
-    };
-
-
-    await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: this.phoneNo,
-        verificationCompleted: verifiedSucces,
-        verificationFailed: verifiedFalied,
-        codeSent: smsCodeSent,
-        codeAutoRetrievalTimeout: autoRetrieve,
-        timeout: const Duration(seconds: 5),
-    ).catchError((e){
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/LoginPage', (Route<dynamic> route) => false);
-      print("///////////Error at verifyPhoneNumber////////////");
-
-    });
-  }
-
-  Future<bool> smsCodeDialog(BuildContext context) {
-    return showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context){
-          return new AlertDialog(
-            title: Text('Enter sms Code'),
-            content: TextField(
-              onChanged: (value) {
-                this.smsCode = value;
-              },
-            ),
-            contentPadding: EdgeInsets.all(10.0),
-            actions: <Widget>[
-              new FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();// Here
-                  },
-                  child:
-                  Text('Done'))
-            ],
-          );
-        });
-  }
-  //End Phone auth
-
+  // Important Credential
   String _email;
   String _password;
-  String _phone;
   String _name;
-  bool disableEmail = true;
-  // Validate
-  TextEditingController userNameController = TextEditingController();
-  bool isName= false;
-  bool isEmail=false;
-  bool isPassword= false;
-  bool isPhone= false;
+  String _category;
 
-  bool validateTextField(String userInput,int field) {
-    if (userInput.isEmpty) {
+// category
+  List _categoryList =[ 'Student','Teacher','Parents','Staff'];
+  String _categoryVal ;
+
+
+
+  //  ///////////////////             Instances of Other
+  final formKey = GlobalKey<FormState>();
+  String dropValue;
+  final dropChange = GlobalKey<FormFieldState>();
+  AuthService authMethods = new AuthService();
+  DatabaseMethods _databaseMethods = new DatabaseMethods();
+
+  // text Edit Controller
+  TextEditingController userNameTextEditController = new TextEditingController();
+  TextEditingController emailTextEditController = new TextEditingController();
+  TextEditingController passwordTextEditController = new TextEditingController();
+
+  //shows loading option while SignUp
+  bool isLoading= false;
+
+  /// SignMe Up   With Email And Password
+  signMeUp(){
+    if(formKey.currentState.validate()){
+      Map<String,dynamic> userInfoMap ={
+        'name': _name,
+        'email': _email,
+        'category':_category,
+        'groups': [],
+      };
+
+      /////////////// shared Prefs
+      helperFunctions.savedUserEmailPreference(_email);
+      helperFunctions.savedUserNamePreference(_name);
+
       setState(() {
-        if(field==0) isEmail=true;
-        else if(field==1) isPassword = true;
-        else if(field==2) isPhone = true;
+        isLoading= true;
       });
-      return false;
+      authMethods.signUpWithEmailAndPassword(emailTextEditController.text, passwordTextEditController.text).then((value){
+        _category = _categoryVal;
+        print("category is : "+ _category);
+        _databaseMethods.uploadUserInfoToDatabase(userInfoMap);
+        helperFunctions.savedUserLoggedInPreference(true);
+        print(value.userId);
+        Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (route) => false);
+      }).catchError((e){
+        print('error at SignUp Page L 47'+e.toString());
+      });
     }
-    setState(() {
-      if(field==0) isEmail=false;
-      else if(field==1) isPassword = false;
-      else if(field==2) isPhone = false;
-    });
-    return true;
   }
+
+  // Valid Email Or Not
+  bool validateStructure(String value){
+    String  pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regExp = new RegExp(pattern);
+    return regExp.hasMatch(value);
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body:isLoading? Container(
+        child: Center(child: CircularProgressIndicator()),
+      ) : SingleChildScrollView(
         child: Container(
           child: Column(
             children: <Widget>[
@@ -183,7 +104,6 @@ class _SignUpState extends State<SignUp> {
                         top: 50,
                         left: 20,
                         width: 150,
-                        height: 200,
                         child: Container(
                           child: Text(
                             "Sign up Now!",
@@ -204,7 +124,7 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.only(left: 20,right: 20),
                 child: Column(
                   children: <Widget>[
                     FadeAnimation(
@@ -222,132 +142,178 @@ class _SignUpState extends State<SignUp> {
                             ]),
                         child: Column(
                           children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      bottom:
-                                          BorderSide(color: Colors.grey[100]))),
-                              child: TextField(
-                                //enabled: disableEmail,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: "Email",
-                                  hintStyle: TextStyle(color: Colors.grey[400]),
-                                  errorText: isEmail ? 'Please enter a Username' : null,
-                                  //focusColor: Colors.blue,
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.green),
-                                  )
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                       //disableEmail = true;
-                                      _email = value.trim();
-                                  });
-                                },
+                            Form(
+                              key : formKey,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom:
+                                            BorderSide(color: Colors.grey[100]))),
+                                    child: TextFormField(
+                                      validator: (val){
+                                        if(val.isEmpty||val.length<2){
+                                          return "Please Provide Username";
+                                        }
+                                        return null;
+                                      },
+                                      controller: userNameTextEditController,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Username",
+                                          hintStyle:
+                                          TextStyle(color: Colors.grey[400]),
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide:
+                                            BorderSide(color: Colors.green),
+                                          )),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _name = value.trim();
+                                        });
+                                      },
+                                    ),
+                                  ),
+
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom:
+                                            BorderSide(color: Colors.grey[100]))),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 5,right: 18),
+                                        child: Container(
+                                          padding: const EdgeInsets.only(left: 5,),
+                                          decoration: BoxDecoration(
+                                            //border: Border.all(color: Colors.black,width: 2),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: DropdownButton(
+                                            focusColor: Colors.blueGrey,
+                                            hint: Text("category",style: TextStyle(color: Colors.grey[500],fontSize: 18,)),
+                                            dropdownColor: Colors.white,
+
+                                            icon: Icon(Icons.arrow_drop_down),
+                                            iconSize: 45,
+                                            isExpanded: true,
+                                            value: _categoryVal,
+                                            style: TextStyle(color: Colors.black54,fontSize: 18,),
+                                            onChanged: (value){
+                                              setState(() {
+                                                _categoryVal = value;
+                                                _category= value;
+                                              });
+                                            },
+                                            items: _categoryList.map((value){
+                                              return DropdownMenuItem(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+
+                                  Container(
+                                    padding: EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom:
+                                            BorderSide(color: Colors.grey[100]))),
+                                    child: TextFormField(
+                                      validator: (val){
+                                        if(!EmailValidator.validate(val)){
+                                          return "enter a valid email address";
+                                        }
+                                        return null;
+                                      },
+                                      controller: emailTextEditController,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Email",
+                                          hintStyle:
+                                          TextStyle(color: Colors.grey[400]),
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide:
+                                            BorderSide(color: Colors.green),
+                                          )),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _email = value.trim();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: TextFormField(
+                                      validator:  (val){
+                                        if(val.length>=6 &&validateStructure(val) ){
+                                          return null;
+                                        }
+                                        return "enter a valid password";
+                                      },
+                                      controller: passwordTextEditController,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText:
+                                          "Create Password (should be at least 6 digits with special char)",
+                                          hintStyle:
+                                          TextStyle(color: Colors.grey[400]),
+                                          //focusColor: Colors.blue,
+                                          focusedBorder: UnderlineInputBorder(
+                                            borderSide:
+                                            BorderSide(color: Colors.green),
+                                          )),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _password = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextField(
-                                //enabled: disableEmail,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Create Password (should be at least 6 digits)",
-                                    hintStyle: TextStyle(color: Colors.grey[400]),
-                                    //focusColor: Colors.blue,
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.green),
-                                    )
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                     //disableEmail = false;
-                                    _password = value;
-                                  });
-                                },
-                              ),
+
+                            ///           Sign Up Here  Submit
+                            SizedBox(
+                              height: 30,
                             ),
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text("OR",style: TextStyle(color: Colors.grey[400]),),
-                            ),
-                            Container(
-                              padding: EdgeInsets.all(8.0),
-                              child: TextField(
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Phone Number",
-                                    hintStyle: TextStyle(color: Colors.grey[400]),
-                                    //focusColor: Colors.blue,
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.green),
-                                    )
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                      _phone = value;
-                                     this.phoneNo = value;
-                                  });
-                                },
-                              ),
-                            ),
-                                                       ///           Sign Up Here  Submit
-                            SizedBox(height: 30,),
                             InkWell(
                               onTap: () async {
-                                try {
-                                  if(_email==null) {
-                                    await verifyPhone();
-                                    if(FirebaseAuth.instance.currentUser != null){
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pushReplacementNamed('/HomePage');
-                                    }else{
-                                      //Navigator.of(context).pop();
-                                      _handleSubmit(context);
-                                    }
-                                  }else
-                                  final newUser = await FirebaseAuth.instance
-                                      .createUserWithEmailAndPassword(
-                                      email: _email, password: _password).then((
-                                      signedInUser) {
-                                    UserManagement().StoreNewUserWithEmail(
-                                        signedInUser.user, context);
-                                  });
-                                } on FirebaseAuthException catch(e){
-                                  if (e.code == 'weak-password') {
-                                    print('The password provided is too weak.');
-                                  } else if (e.code == 'email-already-in-use') {
-                                    print('The account already exists for that email.');
-                                  }
-                                } catch(e){
-                                   print(e);
-                                 }
+                                await signMeUp();
                               },
-                              child: FadeAnimation(2, Container(
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    gradient: LinearGradient(
-                                        colors: [
-                                          Color.fromRGBO(143, 148, 251, 1),
-                                          Color.fromRGBO(143, 148, 251, .6),
-                                        ]
-                                    )
+                              child: FadeAnimation(
+                                2,
+                                Container(
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      gradient: LinearGradient(colors: [
+                                        Color.fromRGBO(143, 148, 251, 1),
+                                        Color.fromRGBO(143, 148, 251, .6),
+                                      ])),
+                                  child: Center(
+                                    child: Text(
+                                      "Submit",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
                                 ),
-                                child: Center(
-                                  child: Text("Submit", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-                                ),
-                              ),
                               ),
                             ),
-
                           ],
-
-
                         ),
-
                       ),
                     ),
                   ],
@@ -359,31 +325,4 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
-
-  Future<void> SignInWithPhone() async {
-    final AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
-    await FirebaseAuth.instance.signInWithCredential(credential).then((user){
-      UserManagement().StoreNewUserWithPhone(_phone, context);
-    }).catchError((e){
-      print(e);
-    });
-  }
-
-  Future<void> _handleSubmit(BuildContext context) async {
-    try {
-      Dialogs.showLoadingDialog(context, _keyLoader);//invoking login
-      await SignInWithPhone();
-      Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();//close the dialoge
-      //Navigator.pushReplacementNamed(context, "/home");
-    } catch (error) {
-      Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();
-      print(error);
-    }
-  }
-
-
 }
-
-
-
-

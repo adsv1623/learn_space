@@ -3,13 +3,27 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:learn_space/FadedAnimation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:learn_space/module/Constant.dart';
+import 'package:learn_space/services/authServices.dart';
+import 'package:learn_space/module/Constant.dart';
+import 'package:learn_space/services/helperFunctions.dart';
 class MainCollapsingToolbar extends StatefulWidget {
   @override
   _MainCollapsingToolbarState createState() => _MainCollapsingToolbarState();
 }
 
 class _MainCollapsingToolbarState extends State<MainCollapsingToolbar> {
+  AuthService authMethods = new AuthService();
+  //Constant  _constant = new Constant();
+  @override
+  void initState() {
+    getUserInfo();
+    super.initState();
+  }
+
+  getUserInfo() async {
+    Constant.myName= await  helperFunctions.getUserNamePreference();
+  }
 
   final List _images =[
     "Images/b1.jpg",
@@ -21,6 +35,12 @@ class _MainCollapsingToolbarState extends State<MainCollapsingToolbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.search),
+        onPressed: (){
+          Navigator.of(context).pushNamed('/SearchPage');
+        },
+      ),
       resizeToAvoidBottomPadding: true,
       body: DefaultTabController(
         length: 3,
@@ -76,8 +96,8 @@ class _MainCollapsingToolbarState extends State<MainCollapsingToolbar> {
                   Center(
                     child: InkWell(
                       onTap: (){
-                        FirebaseAuth.instance.signOut().then((value) {
-                          Navigator.of(context).pushReplacementNamed('/LandingPage');
+                        authMethods.signOut().then((value) {
+                          Navigator.of(context).pushReplacementNamed('/LoginPage');
                         }).catchError((e){
                           print(e);
                         });
