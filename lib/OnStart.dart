@@ -91,13 +91,13 @@ class _OnStartState extends State<OnStart> {
           1.6,
           Container(
             child: AutoSizeText(
-              "Quotes 2", // Todo
-              maxLines: 1,
-              minFontSize: 12,
+              "LearnSpace :)", // Todo
+              maxLines: 2,
+              minFontSize: 20,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 22,
+                fontSize: 45,
                 letterSpacing: 2,
                 shadows: [
                   Shadow(
@@ -115,13 +115,13 @@ class _OnStartState extends State<OnStart> {
           Container(
             margin: EdgeInsets.all(3),
             child: AutoSizeText(
-              "Quotes 3", // Todo
+              "Reach Your E-School", // Todo
               maxLines: 2,
-              minFontSize: 12,
+              minFontSize: 20,
               style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 22,
+                  fontSize: 30,
                   letterSpacing: 2,
                   shadows: [
                     Shadow(
@@ -136,10 +136,12 @@ class _OnStartState extends State<OnStart> {
           2.5,
           Container(
             child: AutoSizeText(
-              "Quotes 4", // Todo
-              maxLines: 1,
-              minFontSize: 12,
-              style: TextStyle(
+              "Students ,Teachers & Parents at a Single Platform", // Todo
+              maxLines: 2,
+              minFontSize: 18,
+              style: GoogleFonts.getFont(
+                'Indie Flower',
+                textStyle: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 22,
@@ -148,8 +150,10 @@ class _OnStartState extends State<OnStart> {
                     Shadow(
                         color: Colors.grey,
                         blurRadius: 20,
-                        offset: Offset(0, 4))
-                  ]),
+                        offset: Offset(0, 4)),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -165,10 +169,12 @@ class _OnStartState extends State<OnStart> {
           Container(
             //padding: EdgeInsets.fromLTRB(, top, right, bottom)
             child: AutoSizeText(
-              "Quotes 5", // Todo
+              "Provide Parents Control over his/her Child Educations", // Todo
               maxLines: 2,
               minFontSize: 12,
-              style: TextStyle(
+              style: GoogleFonts.getFont(
+                'Indie Flower',
+                textStyle: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 22,
@@ -177,8 +183,10 @@ class _OnStartState extends State<OnStart> {
                     Shadow(
                         color: Colors.grey,
                         blurRadius: 20,
-                        offset: Offset(0, 4))
-                  ]),
+                        offset: Offset(0, 4)),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -191,25 +199,28 @@ class _OnStartState extends State<OnStart> {
         FadeAnimation(
           2,
           Container(
-            child:FadeAnimation(1, AutoSizeText(
-              "Get Started Now!",
-              maxLines: 1,
-              minFontSize: 12,
-              style: GoogleFonts.getFont(
-                'Source Code Pro',
-                textStyle: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 40,
-                  shadows: [
-                    Shadow(
-                        color: Colors.deepPurple[300],
-                        blurRadius: 8,
-                        offset: Offset(0, 8))
-                  ],
+            child: FadeAnimation(
+              1,
+              AutoSizeText(
+                "Get Started Now!",
+                maxLines: 1,
+                minFontSize: 12,
+                style: GoogleFonts.getFont(
+                  'Source Code Pro',
+                  textStyle: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 40,
+                    shadows: [
+                      Shadow(
+                          color: Colors.deepPurple[300],
+                          blurRadius: 8,
+                          offset: Offset(0, 8))
+                    ],
+                  ),
                 ),
               ),
-            ),),
+            ),
           ),
         ),
       ],

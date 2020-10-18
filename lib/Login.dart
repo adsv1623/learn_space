@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learn_space/FadedAnimation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:learn_space/services/authServices.dart';
 import 'package:learn_space/services/database.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:learn_space/services/helperFunctions.dart';
 
@@ -47,14 +47,22 @@ class _LoginState extends State<Login> {
       });
       _authService.signInWithEmailAndPassword(_email, _password).then((value) {
         if(value!=null){
-
-
-
           helperFunctions.savedUserLoggedInPreference(true);
           Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (route) => false);
         }
-      }).catchError((e){
-        print("error at Login L45: "+e.toString());
+      }).catchError((e) {
+        Alert(
+            title: "Incorrect Details",
+            context: context,
+            desc: "Email or Password doesn't Match",
+            buttons: [
+              DialogButton(
+                  child: Text("Try Again"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
+            ]).show();
+        print("error at Login L45: " + e.toString());
       });
     }
 
@@ -228,12 +236,7 @@ class _LoginState extends State<Login> {
                         onTap: () async {
                           //Working  Login  with Email & Password
                           await loginMeUp();
-                          /*
-                         FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password).then((user){
-                           Navigator.of(context).pushReplacementNamed('/HomePage');
-                         } ).catchError((e){
-                           print(e);
-                         });*/
+
                         },
                         child: FadeAnimation(2, Container(
                           height: 50,
@@ -303,7 +306,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
 
-                      //SizedBox(height: 70,),   // Todo
+                      //SizedBox(height: 70,),
                       Container(
                           alignment: Alignment.centerRight,
                           child: FadeAnimation(1.5, Text("Forgot Password?", style: TextStyle(color: Color.fromRGBO(143, 148, 251, 1),fontWeight: FontWeight.bold),),),

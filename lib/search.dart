@@ -78,9 +78,11 @@ class _SearchScreenState extends State<SearchScreen> {
                       style: TextStyle(color: Colors.black87,),
                       decoration: InputDecoration(
                         fillColor: Color(0xF18273),
-                        hintText: "Search",
-                        hintStyle: GoogleFonts.getFont('Montserrat',textStyle:TextStyle(
-                        ),),
+                        hintText: "Search Students ,Teachers or Staffs",
+                        hintStyle: GoogleFonts.getFont(
+                          'Montserrat',
+                          textStyle: TextStyle(),
+                        ),
                       ),
                     ),
                   ),
@@ -109,7 +111,9 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
               searchList(),
           ],
+
         ),
+
       ),
     );
   }

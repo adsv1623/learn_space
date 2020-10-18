@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:learn_space/services/UserManagement.dart';
-import 'package:learn_space/services/authServices.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,12 +19,12 @@ class _SplashScreenState extends State<SplashScreen> {
         .authStateChanges()
         .listen((User user) {
       if (user == null) {
-        print('User is currently signed out! So Moved To OnStart Page From Splash Screen');
+        //print('User is currently signed out! So Moved To OnStart Page From Splash Screen');
         Navigator.of(context).pushReplacementNamed('/OnStart');
       } else {
-        print('User is Already signed in! So Moved To HomePage From Splash Screen');
+        //print('User is Already signed in! So Moved To HomePage From Splash Screen');
         Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (route) => false);
-        print('Current User UID : $user');
+        //print('Current User UID : $user');
       }
     });
     super.initState();

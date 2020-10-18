@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: camel_case_types
 class helperFunctions {
   static String sharedPreferenceUserLoggedInKey = 'ISLOGGEDIN';
   static String sharedPreferenceUserNameKey = 'USERNAMEKEY';

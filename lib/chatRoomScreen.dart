@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:learn_space/module/Constant.dart';
 import 'package:learn_space/services/database.dart';
 
+// ignore: camel_case_types
 class chatRoomScreen extends StatefulWidget {
+  // ignore: non_constant_identifier_names
   final String ChatRoomId;
 
   chatRoomScreen(this.ChatRoomId);
@@ -13,11 +15,13 @@ class chatRoomScreen extends StatefulWidget {
   _chatRoomScreenState createState() => _chatRoomScreenState();
 }
 
+// ignore: camel_case_types
 class _chatRoomScreenState extends State<chatRoomScreen> {
   DatabaseMethods _databaseMethods = new DatabaseMethods();
   TextEditingController messageController = new TextEditingController();
   Stream chatMessageStream;
 
+  // ignore: non_constant_identifier_names
   Widget ChatMessageList() {
     return StreamBuilder(
       stream: chatMessageStream,
@@ -119,13 +123,13 @@ class _chatRoomScreenState extends State<chatRoomScreen> {
               ],
             ),
           ),
-
         ],
       ),
     );
   }
 }
 
+// ignore: camel_case_types
 class messageTile extends StatelessWidget {
   final String message;
   final bool isSendByMe;
