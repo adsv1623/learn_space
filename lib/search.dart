@@ -6,13 +6,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:learn_space/module/Constant.dart';
 import 'package:learn_space/services/database.dart';
 
+import 'chatRoomScreen.dart';
+
 class SearchScreen extends StatefulWidget {
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  TextEditingController searchTextEditingController = new TextEditingController();
+  TextEditingController searchTextEditingController =
+      new TextEditingController();
   DatabaseMethods _databaseMethods = new DatabaseMethods();
 
   QuerySnapshot searchSnapshot;
@@ -109,14 +112,16 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 createChatRoomAndStartConversation(BuildContext context, String userName){
   if(userName!=Constant.myName){
-    String chatRoomId = getChatRoomId(Constant.myName,userName);
-    List<String> users = [Constant.myName,userName];
-    Map<String,dynamic> chatRoomMap ={
-      "users" : users,
+    String chatRoomId = getChatRoomId(Constant.myName, userName);
+    List<String> users = [Constant.myName, userName];
+    Map<String, dynamic> chatRoomMap = {
+      "users": users,
       "chatroomId": chatRoomId
     };
     DatabaseMethods().createChatRoom(chatRoomId, chatRoomMap);
-    Navigator.of(context).pushReplacementNamed('/chatRoomScreen');
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => chatRoomScreen(chatRoomId),
+    ),);
   }
 }
 

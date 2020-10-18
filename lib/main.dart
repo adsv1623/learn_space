@@ -28,7 +28,6 @@ class MyApp extends StatelessWidget {
         '/HomePage': (BuildContext context) => new MainCollapsingToolbar(),
         '/OnStart':  (BuildContext context) => new OnStart(),
         '/SearchPage': (BuildContext context) => new SearchScreen(),
-        '/chatRoomScreen': (BuildContext context) => new chatRoomScreen(),
       },
     );
   }
